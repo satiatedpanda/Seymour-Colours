@@ -55,7 +55,7 @@ if Auto == "0":
             raise SystemExit
 else:
     databaseExtractor
-    with open(r"C:\Users\flemi\Documents\SeymourStuf\seymourdatabase.txt", "r") as fd:
+    with open(r"[obfuscated]\Documents\SeymourStuf\seymourdatabase.txt", "r") as fd:
         ColorSetHexes = fd.read().upper().replace(" #", "hex:").split('\n')
         ColorSetHexes.pop(-1)
 
@@ -669,7 +669,7 @@ if __name__ == '__main__':
     
     WritetoFile = input("\nDo you want to write to the file? (\"0\" for yes, anything else for no)\n")
     if "0" in WritetoFile:
-        with open(r"C:\Users\flemi\Documents\SeymourStuf\SheetsUploadDatabase.txt", "w") as fd:
+        with open(r"[obfuscated]\Documents\SeymourStuf\SheetsUploadDatabase.txt", "w") as fd:
                 dbstr = ""
                 for i in range(len(piecedata)):
                     dbstr = f"{dbstr}{piecedata[i]}\n"
