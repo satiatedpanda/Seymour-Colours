@@ -2,7 +2,7 @@ import json
 
 databaselist = []
 
-with open(r"C:\Users\flemi\AppData\Roaming\PrismLauncher\instances\1.21.5 Skyblock\minecraft\config\seymouranalyzer\collection.json", "r") as file:
+with open(r"[redacted]\AppData\Roaming\PrismLauncher\instances\1.21.5 Skyblock\minecraft\config\seymouranalyzer\collection.json", "r") as file:
     col: dict = json.load(file)
     colkeys = list(col.keys())
 
@@ -15,7 +15,7 @@ with open(r"C:\Users\flemi\AppData\Roaming\PrismLauncher\instances\1.21.5 Skyblo
         databaselist.append(f"{curName} #{curHex}")
 
 
-with open(r"C:\Users\flemi\Documents\SeymourStuf\seymourdatabase.txt", "w") as f:
+with open(r"[redacted]\Documents\SeymourStuf\seymourdatabase.txt", "w") as f:
     dbstr = ""
     for i in range(len(databaselist)):
         dbstr = f"{dbstr}{databaselist[i]}\n"
