@@ -1,0 +1,6 @@
+private_functions/
+old_programs/
+fun_little_programs/
+__pycache__/
+tests.py
+bountiesetup.py
