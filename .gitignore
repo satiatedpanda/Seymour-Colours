@@ -4,3 +4,4 @@ fun_little_programs/
 __pycache__/
 tests.py
 bountiesetup.py
+databaseExtractor.py
