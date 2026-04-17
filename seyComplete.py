@@ -1,6 +1,6 @@
 import math
 from collections import Counter
-import private_functions.databaseExtractor as databaseExtractor
+from private_functions.databaseExtractor import databaseExtract
 from seymourhelper import delta, rgbdecouple, find_many
 
 def threeMainVals(pieceHex):
@@ -455,7 +455,7 @@ def MainFunction():
                     print("Split String Error")
                     raise SystemExit
     else:
-        databaseExtractor
+        databaseExtract()
         with open("seymourdatabase.txt", "r") as fd:
             ColorSetHexes = fd.read().upper().split('\n')
             ColorSetHexes.pop(-1)
