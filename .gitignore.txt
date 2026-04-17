@@ -1,0 +1,3 @@
+private_functions/
+old_programs/
+fun_little_programs/
