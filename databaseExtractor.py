@@ -4,7 +4,7 @@ from private_functions.opendatabase import opendatabase
 def databaseExtract():
     databaselist = []
 
-    col = opendatabase() #This returns a dict from the json object. Done this way to not dox myself :D
+    col: dict = opendatabase() #This returns a dict from the json object. Done this way to not dox myself :D
     colkeys = list(col.keys())
     for i in range(len(col)):
         curName: str = col[colkeys[i]]["pieceName"]
