@@ -1,6 +1,6 @@
 import math
 from seymourhelper import delta
-from private_functions.databaseExtractor import openfile
+from databaseExtractor import openfile
 
 
 #gets all dupes

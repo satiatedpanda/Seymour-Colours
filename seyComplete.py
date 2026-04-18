@@ -1,6 +1,6 @@
 import math
 from collections import Counter
-from private_functions.databaseExtractor import databaseExtract
+from databaseExtractor import databaseExtract
 from seymourhelper import delta, rgbdecouple, find_many
 
 def threeMainVals(pieceHex):
