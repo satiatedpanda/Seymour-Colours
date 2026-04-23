@@ -94,6 +94,23 @@ def whiteness(piecehex):
     bprod = red - green
     return f"{(math.sqrt((rprod**2) + (gprod**2) + (bprod**2))/1.7):.3f}"
 
+def incollectionrange(pieceHex):
+    if pieceHex[0] == "#":
+        pieceHex = pieceHex[1:]
+    lowval = ["0", "1", "2"]
+    lowvalnum = 0
+    highval = ["D", "E", "F"]
+    highvalnum = 0
+    for i in range(0,len(pieceHex), 2):
+        if pieceHex[i] in lowval:
+            lowvalnum += 1
+        if pieceHex[i] in highval:
+            highvalnum += 1
+    if 3 in {lowvalnum, highvalnum}:
+        return "True"
+    else:
+        return ""
+    
 def allOther(pieceHex):
 
     if pieceHex[0] == "#":
@@ -468,7 +485,7 @@ def MainFunction():
         iType = ColorSetHexes[i][0]
         lowestHexHyp, lowestHexName, lowestscorestr, distance = delta(iHex, iType, dictOfHypixelHexColours)
         deltastr = str(f"#{lowestHexHyp}, {lowestHexName}, {lowestscorestr}, {distance}")
-        FinalPrintList.append(f"{iType}, {iHex}, {deltastr}, {threeMainVals(iHex)}, {whiteness(iHex)}, {sameThreeAAA(iHex)}, {sameThreeABC(iHex)}, {sameAABBCC(iHex)}, {palendromepices(iHex)}, {sameRGBval(iHex)}, {threeTwoSameNums(iHex)}, {allOther(iHex)}, {countofvals(iHex)}")
+        FinalPrintList.append(f"{iType}, {iHex}, {deltastr}, {threeMainVals(iHex)}, {whiteness(iHex)}, {sameThreeAAA(iHex)}, {incollectionrange(iHex)}, {sameThreeABC(iHex)}, {sameAABBCC(iHex)}, {palendromepices(iHex)}, {sameRGBval(iHex)}, {threeTwoSameNums(iHex)}, {allOther(iHex)}, {countofvals(iHex)}")
 
     return FinalPrintList, Auto
 
