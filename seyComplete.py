@@ -104,8 +104,10 @@ def incollectionrange(pieceHex):
     for i in range(0,len(pieceHex), 2):
         if pieceHex[i] in lowval:
             lowvalnum += 1
-        if pieceHex[i] in highval:
+        elif pieceHex[i] in highval:
             highvalnum += 1
+        else: 
+            return ""
     if 3 in {lowvalnum, highvalnum}:
         return "True"
     else:
@@ -418,7 +420,8 @@ def MainFunction():
     ("7C3756", "Mythos Leggings+Boots"),
     ("FFE501", "Helianthus Leggings")
     ])
-    ColorSetHexes: list[list[str,str]] = []
+    ColorSetHexes: list[list[str]] = []
+    oldcolors: list[list[str]] = []
     Auto = input("type '0' for manual, anything else for automatic\n")
     if Auto == "0":
         InputStringHexes = input("Colour Set Hex Codes, Right Click and paste as a single line:\n").upper()
@@ -472,39 +475,89 @@ def MainFunction():
                     print("Split String Error")
                     raise SystemExit
     else:
-        databaseExtract()
-        with open("seymourdatabase.txt", "r") as fd:
-            ColorSetHexes = fd.read().upper().split('\n')
-            ColorSetHexes.pop(-1)
-            for idx,val in enumerate(ColorSetHexes):
-                ColorSetHexes[idx] = val.split(" ") 
+        with open("seymourdatabase.txt", "r") as fs:
+            oldcolors = fs.read().split('\n')
+            oldcolors.pop(-1)
+            for idx,val in enumerate(oldcolors):
+                oldcolors[idx] = val.split(" ")
+        ColorSetHexes = databaseExtract()
+        for i in range(len(ColorSetHexes)):
+            ColorSetHexes[i] = ColorSetHexes[i].split(" ")
+    removed_colors = []
+    added_colors = []
+    old_color_set = set()
+    new_color_set = set()
+
+    for i in range(len(oldcolors)):
+        old_color_set.add(oldcolors[i][0].upper())
+    for i in range(len(ColorSetHexes)):
+        new_color_set.add(ColorSetHexes[i][0].upper())
+    
+    o_color_set = old_color_set.difference(new_color_set)
+    n_color_set = new_color_set.difference(old_color_set)
+    while len(o_color_set)>0:    
+        for value in oldcolors:
+            if value[0] in o_color_set:
+                removed_colors.append(value)
+        break
+    while len(n_color_set)>0:
+        for value in ColorSetHexes:
+            if value[0] in n_color_set:
+                added_colors.append(value)
+        break
+
+
+
 
     FinalPrintList = []
-    for i in range(len(ColorSetHexes)):
-        iHex = ColorSetHexes[i][1]
-        iType = ColorSetHexes[i][0]
+    for i in ColorSetHexes:
+        iHex = i[2]
+        iType = i[1]
         lowestHexHyp, lowestHexName, lowestscorestr, distance = delta(iHex, iType, dictOfHypixelHexColours)
         deltastr = str(f"#{lowestHexHyp}, {lowestHexName}, {lowestscorestr}, {distance}")
         FinalPrintList.append(f"{iType}, {iHex}, {deltastr}, {threeMainVals(iHex)}, {whiteness(iHex)}, {sameThreeAAA(iHex)}, {incollectionrange(iHex)}, {sameThreeABC(iHex)}, {sameAABBCC(iHex)}, {palendromepices(iHex)}, {sameRGBval(iHex)}, {threeTwoSameNums(iHex)}, {allOther(iHex)}, {countofvals(iHex)}")
+    changed_list = []
+    if len(removed_colors)>0:
+        changed_list.append("\nRemoved Colors:")
+        for i in range(len(removed_colors)):
+            iHex = removed_colors[i][2]
+            iType = removed_colors[i][1]
+            changed_list.append(f"{iType}, {iHex}")
+    if len(added_colors)>0:
+        changed_list.append("\nAdded Colors:")
+        for i in range(len(added_colors)):
+            iHex = added_colors[i][2]
+            iType = added_colors[i][1]
+            lowestHexHyp, lowestHexName, lowestscorestr, distance = delta(iHex, iType, dictOfHypixelHexColours)
+            deltastr = str(f"#{lowestHexHyp}, {lowestHexName}, {lowestscorestr}, {distance}")
+            changed_list.append(f"{iType}, {iHex}, {deltastr}, {threeMainVals(iHex)}, {whiteness(iHex)}, {sameThreeAAA(iHex)}, {incollectionrange(iHex)}, {sameThreeABC(iHex)}, {sameAABBCC(iHex)}, {palendromepices(iHex)}, {sameRGBval(iHex)}, {threeTwoSameNums(iHex)}, {allOther(iHex)}, {countofvals(iHex)}")
 
-    return FinalPrintList, Auto
+    return FinalPrintList, changed_list, Auto
 
 
 if __name__ == '__main__':
     
-    piecedata, append = MainFunction()
-    for i in range(len(piecedata)):
-        print(f'{piecedata[i]}')
+    piecedata, updatelist, append = MainFunction()
     if append != "0":
-        WritetoFile = input("\nDo you want to write to the file? (\"0\" for yes, anything else for no)\n")
-        if "0" in WritetoFile:
+        if len(updatelist) > 0:
+            if len(updatelist) < 300:
+                for i in updatelist:
+                    print(i)
+                print()
+            else:
+                print("Many things added/removed\n")
             with open("SheetsUploadDatabase.txt", "w") as fd:
                     dbstr = ""
                     for i in range(len(piecedata)):
                         dbstr = f"{dbstr}{piecedata[i]}\n"
                     fd.write(dbstr)
                     print("Writing Done")
+        else:
+            print("No changes made since last ran\n")
+
     else:
+        for i in piecedata:
+            print(i)
         WritetoFile = input("\nDo you want to append exported hexes the file? (\"0\" for yes, anything else for no)\n")
         if "0" in WritetoFile:
             with open("SheetsUploadDatabase.txt", "a") as fd:

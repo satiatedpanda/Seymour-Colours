@@ -2,7 +2,7 @@ from private_functions.opendatabase import opendatabase
 
 
 def databaseExtract():
-    databaselist = []
+    databaselist: list[str] = []
 
     col: dict = opendatabase() #This returns a dict from the json object. Done this way to not dox myself :D
     colkeys = list(col.keys())
@@ -11,7 +11,7 @@ def databaseExtract():
         curName = curName.replace(" ", "_")
         curName = curName.replace("Giant_", "") # replace all reforges with adding on more replace statements when necessary
         curHex = col[colkeys[i]]["hexcode"]
-        databaselist.append(f"{curName} #{curHex}")
+        databaselist.append(f"{colkeys[i]} {curName} #{curHex}".upper())
 
 
     with open(r"seymourdatabase.txt", "w") as f:
