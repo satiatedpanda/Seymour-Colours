@@ -12,12 +12,14 @@ def find_all_dupes():
     database = openfile()
     for string in database:
         str_list = string.split()
-        if str_list[1] in data_dict: #this will only execude if a dupe is in data_dict
+        hexcode = str_list[2]
+        piece_type = str_list[1]
+        if hexcode in data_dict: #this will only execude if a dupe is in data_dict
             y= ["VELVET_TOP_HAT", "CASHMERE_JACKET", "SATIN_TROUSERS", "OXFORD_SHOES"]
             pieces_in_dict = ["Helm", "Chestplate", "Leggings", "Boots"]
             removed_pieces = []
-            data_dict[str_list[1]].append(str_list[0])
-            z=sorted(data_dict[str_list[1]], key=y.index) #idk what this does
+            data_dict[hexcode].append(piece_type)
+            z=sorted(data_dict[hexcode], key=y.index) #idk what this does
             piece_str = ""
             negated_piece_str = ""
             for idx,val in enumerate(z): #for all piece dupes
@@ -37,16 +39,16 @@ def find_all_dupes():
                     removed_pieces.append(pieces_in_dict.pop(i))
             negated_piece_str = "+".join(pieces_in_dict)
             piece_str = piece_str.replace("Helm", "H").replace("Chestplate", "C").replace("Leggings", "L").replace("Boots", "B").replace("+","").replace("Hs", "H")
-            dupe_dict[str_list[1]] = piece_str
-            negated_dupe_dict[str_list[1]] = "negated"+negated_piece_str            
-            temp_dict = {str_list[1]: ["","","",""]}
+            dupe_dict[hexcode] = piece_str
+            negated_dupe_dict[hexcode] = "negated"+negated_piece_str            
+            temp_dict = {hexcode: ["","","",""]}
             for value in removed_pieces:
                 pieces_copy = ["Helm", "Chestplate", "Leggings", "Boots"]
                 value_index = pieces_copy.index(value)
-                temp_dict[str_list[1]][value_index] = str_list[1]
+                temp_dict[hexcode][value_index] = hexcode
             formated_dupe_list.append(temp_dict)
         else:
-            data_dict[str_list[1]] = [str_list[0]]
+            data_dict[hexcode] = [piece_type]
 
     return data_dict, dupe_dict, negated_dupe_dict, formated_dupe_list
 
@@ -70,7 +72,8 @@ def find_all_t1s(data_dict, dupe_dict, negated_dupe_dict, formated_dupe_list):
     for dupe in formated_dupe_list:
         lowest_scores: list[list[str,int]] = [10,10,10,10]
         cur_dupe_items = list(dupe.items())[0]
-        for i in range(len(dupe_t1s)-1,-1,-1):
+        dupe_t1s_len = len(dupe_t1s)
+        for i in range(dupe_t1s_len-1,-1,-1):
             y= ["VELVET_TOP_HAT", "CASHMERE_JACKET", "SATIN_TROUSERS", "OXFORD_SHOES"]
             if cur_dupe_items[0] == dupe_t1s[i][2]:
                 current_piece_type = dupe_t1s[i][1]
@@ -120,5 +123,5 @@ if __name__ == "__main__":
     with open("dupedatabase.txt", "w") as fs:
         dbstr = ""
         for i in range(len(print_list)):
-            dbstr = f"{dbstr}{print_list[i]}\n".upper()
-        fs.write(dbstr)
+            dbstr = f"{print_list[i]}\n".upper()
+            fs.write(dbstr)

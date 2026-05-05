@@ -182,7 +182,7 @@ def delta(pieceHex: str, typeOfPiece, main_dict: dict[str,str]) -> tuple[str,str
     """
     ArmorTypes = ["VELVET_TOP_HAT", "CASHMERE_JACKET", "SATIN_TROUSERS", "OXFORD_SHOES"]
     if typeOfPiece not in ArmorTypes:
-        return "Error"
+        print(f"Armour Type given: {typeOfPiece}")
     lowestscore: float = 10000.0
     lowestHexHyp = "None"
     lowestHexName = "None"
