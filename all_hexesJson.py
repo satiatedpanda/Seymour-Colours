@@ -111,7 +111,7 @@ def all_hexcodes_json():
                 num = comparison_integer + (file_number * MULTIPLIER)
                 print(f"File {file_number}: {comparison_integer*100/MULTIPLIER:.3f}% - Whole Program: {num*100/(TOTAL_NUMS):.3f}%", end="\r")
 
-        with open(f"C:\\repo\\Seymour-Colours\\hexes_list\\hexes_{file_number}.json", "w") as fd:
+        with open(f"hexes_list\\hexes_{file_number}.json", "w") as fd:
             json.dump(json_dict, fd, indent=4)
             print(f"\nwrote {file_number}")
         print(f"\n")
@@ -122,7 +122,7 @@ def jsonspliiter():
         col: dict = {}
         col_split_1 = {}
         col_split_2 = {}
-        with open(f"C:\\repo\\Seymour-Colours\\hexes_list\\hexes_{file_number}.json", "r") as fd:
+        with open(f"hexes_list\\hexes_{file_number}.json", "r") as fd:
             col = json.load(fd)
         half_col_len = len(col)//2
         for integer, (hex, subdict) in enumerate(col.items()):
@@ -130,10 +130,10 @@ def jsonspliiter():
                 col_split_1[hex] = subdict
             else:
                 col_split_2[hex] = subdict         
-        with open(f"C:\\repo\\Seymour-Colours\\hexes_list\\hexes_{file_number}.0.json", "w") as fd:
+        with open(f"hexes_list\\hexes_{file_number}.0.json", "w") as fd:
             json.dump(col_split_1, fd, indent=4)
             print(f"\nwrote {file_number}.0")
-        with open(f"C:\\repo\\Seymour-Colours\\hexes_list\\hexes_{file_number}.8.json", "w") as fs:
+        with open(f"hexes_list\\hexes_{file_number}.8.json", "w") as fs:
             json.dump(col_split_2, fs, indent=4)
             print(f"\nwrote {file_number}.8")            
 
@@ -145,7 +145,7 @@ def worst_delta():
     for file_number in range(16):  
         for sub_file_number in range(0, 9, 8):
             col: dict = {}
-            with open(f"C:\\repo\\Seymour-Colours\\hexes_list\\hexes_{file_number}.{sub_file_number}.json", "r") as fd:
+            with open(f"hexes_list\\hexes_{file_number}.{sub_file_number}.json", "r") as fd:
                 col = json.load(fd)
             for idx, rgbhex in enumerate(col.keys()):
                 delta_dict: dict = col[rgbhex]["delta"]
@@ -201,7 +201,7 @@ def highest_abs():
     for file_number in range(16):  
         for sub_file_number in range(0, 9, 8):
             col: dict = {}
-            with open(f"C:\\repo\\Seymour-Colours\\hexes_list\\hexes_{file_number}.{sub_file_number}.json", "r") as fd:
+            with open(f"hexes_list\\hexes_{file_number}.{sub_file_number}.json", "r") as fd:
                 col = json.load(fd)
             for idx, rgbhex in enumerate(col.keys()):
                 delta_dict: dict = col[rgbhex]["delta"]

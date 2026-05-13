@@ -130,7 +130,7 @@ def string_splitter():
   
 def auto_yes():
     changed_list = []  
-    with open("seymourdatabase.txt", "r") as fs:
+    with open("personal_databases\seymourdatabase.txt", "r") as fs:
         oldcolors = fs.read().split('\n')
         oldcolors.pop(-1)
         for idx,val in enumerate(oldcolors):
@@ -205,7 +205,7 @@ if __name__ == '__main__':
             print()
         else:
             print("Many things added/removed\n")
-        with open("SheetsUploadDatabase.txt", "w") as fd:
+        with open("personal_databases\SheetsUploadDatabase.txt", "w") as fd:
                 dbstr = ""
                 for i in range(len(piecedata)):
                     dbstr = f"{piecedata[i]}\n"
@@ -217,7 +217,7 @@ if __name__ == '__main__':
             print(i)
         WritetoFile = input("Do you want to append exported hexes the file? (\"0\" for yes, anything else for no)\n")
         if "0" in WritetoFile:
-            with open("SheetsUploadDatabase.txt", "a") as fd:
+            with open("personal_databases\SheetsUploadDatabase.txt", "a") as fd:
                     dbstr = ""
                     for i in range(len(piecedata)):
                         dbstr = f"{piecedata[i]}\n"

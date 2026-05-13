@@ -18,7 +18,12 @@ def find_all_dupes():
             pieces_in_dict = ["Helm", "Chestplate", "Leggings", "Boots"]
             removed_pieces = []
             data_dict[hexcode].append(piece_type)
-            z=sorted(data_dict[hexcode], key=y.index) #idk what this does
+            try:
+                z=sorted(data_dict[hexcode], key=y.index) #idk what this does
+            except ValueError as e:
+                print(e)
+                print(data_dict[hexcode])
+                exit()
             piece_str = ""
             negated_piece_str = ""
             for idx,val in enumerate(z): #for all piece dupes
@@ -123,7 +128,7 @@ if __name__ == "__main__":
     print("found all dupes")
     print_list = find_all_t1s(data_dict, dupe_dict, negated_dupe_dict, formated_dupe_list)
     print("found all t1s... done\n")
-    with open("dupedatabase.txt", "w") as fs:
+    with open("personal_databases\dupedatabase.txt", "w") as fs:
         dbstr = ""
         for i in range(len(print_list)):
             dbstr = f"{print_list[i]}\n".upper()

@@ -1,4 +1,4 @@
-from private_functions.opendatabase import opendatabase
+from private_functions.opendatabase import opendatabase, open_rando
 import csv
 
 def databaseExtract():
@@ -14,7 +14,7 @@ def databaseExtract():
         databaselist.append(f"{colkeys[i]} {curName} #{curHex}".upper())
 
 
-    with open(r"seymourdatabase.txt", "w") as f:
+    with open(r"personal_databases\seymourdatabase.txt", "w") as f:
         dbstr = ""
         for i in range(len(databaselist)):
             dbstr = f"{databaselist[i]}\n".upper()
@@ -24,9 +24,7 @@ def databaseExtract():
 def random_extract():
     collection: list[list[str]] = []
     databaselist: list[str] = []
-    with open(r"C:\Users\flemi\Downloads\seymourDB\seymourDB.csv") as fp:
-        reader = csv.reader(fp, delimiter=",")
-        collection = [row for row in reader]
+    collection = open_rando()
     for sublist in collection:
         name = sublist[1]
         ArmorTypes = ["VELVET_TOP_HAT", "CASHMERE_JACKET", "SATIN_TROUSERS", "OXFORD_SHOES"]   
@@ -43,7 +41,7 @@ def random_extract():
         databaselist.append(f"{sublist[3]} {name} #{sublist[0]}".upper())
 
 
-    with open(r"katzedatabase.txt", "w") as f:
+    with open(r"private_functions\katzedatabase.txt", "w") as f:
         dbstr = ""
         for i in range(len(databaselist)):
             dbstr = f"{databaselist[i]}\n".upper()
@@ -53,7 +51,7 @@ def random_extract():
     return databaselist
 
 def openfile():
-    with open("seymourdatabase.txt", "r") as fd:
+    with open("personal_databases/seymourdatabase.txt", "r") as fd:
         database = fd.read().split("\n")
         database.pop()
     return database

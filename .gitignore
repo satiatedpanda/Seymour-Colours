@@ -2,6 +2,7 @@ private_functions/
 old_programs/
 fun_little_programs/
 __pycache__/
+personal_databases/
 tests.py
 bountiesetup.py
 SheetsUploadDatabase.txt
