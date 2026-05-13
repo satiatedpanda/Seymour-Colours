@@ -1,5 +1,4 @@
-import math
-from seymourhelper import delta
+from hexcodeClass import Hexcode
 from databaseExtractor import openfile
 
 
@@ -57,9 +56,10 @@ def find_all_t1s(data_dict, dupe_dict, negated_dupe_dict, formated_dupe_list):
     dupe_t1s = []
     #gets all t1s to dupes
     for hex,piece in data_dict.items():
+        temp_hexcode = Hexcode(hex, piece[0])
         deltaScore = 1000.0
         low_hex = ""
-        low_hex, unsed1, deltaScore, unsed2 = delta(hex[1:],piece[0],negated_dupe_dict)
+        low_hex, unsed1, deltaScore, unsed2 = temp_hexcode.delta(negated_dupe_dict)
         if deltaScore > 2.00:
             continue
         else:
@@ -68,6 +68,9 @@ def find_all_t1s(data_dict, dupe_dict, negated_dupe_dict, formated_dupe_list):
     final_list = []
     current_piece_type = ""
     current_delta = 1000
+
+
+
 
     for dupe in formated_dupe_list:
         lowest_scores: list[list[str,int]] = [10,10,10,10]

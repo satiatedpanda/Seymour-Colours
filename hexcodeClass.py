@@ -39,6 +39,9 @@ class Hexcode:
             if attribute == False:
                 setattr(self, lstss[idx], "") 
 
+    def __str__(self):
+        uuids = f", {self.uuid}" if self.uuid is not None else ""
+        return f"{self.hexcode}, {self.piecetype}{uuids}"
 
     def threeMainVals(self) -> None:
         pieceHex = self.hexcode
@@ -191,7 +194,7 @@ class Hexcode:
 
         self.everthing_else = False
 
-    def delta(self, main_dict: dict[str,str] | None = None) -> None:
+    def delta(self, main_dict: dict[str,str] | None = None) -> tuple:
         """Computes the lowest delta between a piece and a dictionary of hexes
 
         Args:
@@ -496,7 +499,9 @@ class Hexcode:
         lowestscorestr = float(lowestscorestr)
 
         distance = distanceRGBaway(pieceHex, lowestHexHyp)
-        self.pdelta = "#"+lowestHexHyp, lowestHexName, lowestscorestr, distance
+        lowestHexHyp = "#"+lowestHexHyp if lowestHexHyp.startswith("#") is not True else lowestHexHyp
+        self.pdelta = lowestHexHyp, lowestHexName, lowestscorestr, distance
+        return self.pdelta
 
     @staticmethod
     def sameRGBval(pieceHex: str) -> bool: # unused       
@@ -509,6 +514,6 @@ class Hexcode:
     
 
 if __name__ == "__main__":
-    temp_hex = Hexcode("#232334")
-    temp_hex.assign_all_attributes()
-    print(temp_hex.grayness, temp_hex.pdelta)
+    temp_hex = Hexcode("#232334", "NONE")
+    # temp_hex.assign_all_attributes()
+    print(temp_hex.delta())

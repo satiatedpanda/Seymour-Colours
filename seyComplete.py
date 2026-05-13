@@ -4,13 +4,13 @@ from seymourhelper import find_many
 from hexcodeClass import Hexcode
 
 
-def hexcodestuff(list_var: list[list[str]]):
+def hexcodestuff(list_var: list[Hexcode]):
     new_list = []
-    list_var = sorted(list_var, key=lambda x: x[2])
-    for i in list_var:
-        iHex = i[2]
-        iType = i[1]
-        current_hex = Hexcode(iHex, iType)
+    print("test hello")
+    list_var = sorted(list_var, key=lambda x: x.hexcode)
+    for current_hex in list_var:
+        iHex = current_hex.hexcode
+        iType = current_hex.piecetype
         current_hex.assign_all_attributes()
         current_hex.rename_all_false()
         lowestHexHyp, lowestHexName, lowestscorestr, distance = current_hex.pdelta        
@@ -158,6 +158,7 @@ def auto_yes():
     if len(n_color_set)>0:
         for value in ColorSetHexes:
             if value[0] in n_color_set:
+                value = Hexcode(value[2], value[1], value[0])
                 added_colors.append(value)
 
     if len(added_colors)+len(removed_colors) == 0:
@@ -168,17 +169,20 @@ def auto_yes():
         for i in range(len(removed_colors)):
             iHex = removed_colors[i][2]
             iType = removed_colors[i][1]
-            changed_list.append(f"{iType}, {iHex}")
+            appendval = Hexcode(iHex, iType)
+            changed_list.append(appendval)
     if len(added_colors)>0:
         changed_list.append("\nAdded Colors:")
         added_list = hexcodestuff(added_colors)
         changed_list.extend(added_list)
+    for idx, value in enumerate(ColorSetHexes):
+        ColorSetHexes[idx] = Hexcode(value[2], value[1], value[0])
     return ColorSetHexes, changed_list
 
 #main function, combinging them all
 def MainFunction():
   #dictionaries
-    ColorSetHexes: list[list[str]] = []
+    ColorSetHexes: list[Hexcode] = []
     FinalPrintList = []
     changed_list = []    
     Auto = input("type '0' for manual, anything else for automatic\n")
