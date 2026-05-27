@@ -6,7 +6,6 @@ from hexcodeClass import Hexcode
 
 def hexcodestuff(list_var: list[Hexcode]):
     new_list = []
-    print("test hello")
     list_var = sorted(list_var, key=lambda x: x.hexcode)
     for current_hex in list_var:
         iHex = current_hex.hexcode
@@ -21,7 +20,7 @@ def hexcodestuff(list_var: list[Hexcode]):
         new_list.append(str_to_append)
     return new_list
 
-def json_file_hexcode_stuff(list_var: list[list[str]]):
+def json_file_hexcode_stuff(list_var: list[list[str]]): #unfinished
     new_list = []
     file_dictionary = {}
     list_var = sorted(list_var, key=lambda x: x[2])

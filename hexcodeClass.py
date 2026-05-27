@@ -39,9 +39,12 @@ class Hexcode:
             if attribute == False:
                 setattr(self, lstss[idx], "") 
 
+    def __repr__(self):
+        return str(self)
+
     def __str__(self):
-        uuids = f", {self.uuid}" if self.uuid is not None else ""
-        return f"{self.hexcode}, {self.piecetype}{uuids}"
+        uuids = f" {self.uuid}" if self.uuid is not None else ""
+        return f"{self.hexcode} {self.piecetype}{uuids}"
 
     def threeMainVals(self) -> None:
         pieceHex = self.hexcode
@@ -158,16 +161,16 @@ class Hexcode:
         pieceHex = self.hexcode
         if pieceHex[0] == "#":
             pieceHex = pieceHex[1:]
+        self.everthing_else = False            
         #includes words, hexes with only 1 color, and whatever else I feel like adding
-        wordlist = ["DECODE", "D1ED", "B00B", "C001", "FA11", "BEEF", "C0FFEE", "F1EA", "F1EE",
-                    "FE1F", "BEAD", "CEA1", "BA11", "DEAD", "DEED", "DECADE", "FADE", "4AC0B",
-                    "B1EED", "FACE", "F00D", "FEED", "FACADE", "D05E", "6969", "9696", "CAFE", "BA1D",
-                    "5EED", "5AFE", "CEA5E", "B0D1E5", "CA5E", "B033C1", "DEF1ED", "D1CE", "AC1D", "1EAF",
-                    "51DE", "BA5E", "BADD1E", "BA55", "EDD1E", "FEEB1E", "C0DE", "F01D", "BADA55", "007AC0", "1EAD"
-                    "C0C0", "DEAF", "A0D1AC", "CA5A", "1CED", "1DEA", "D7ED", "DEC1DE", "DEA1", "AD1DA5", "CA1C",
-                    "ABCDEF", "ABCDE", "ABCD", "D15C0"
-                    "C0DA", "2025", "2024", "2020", "2023", "2022", "2021", "2004", "2019", "ACAC1A", "CA551E"]
-        
+        wordlist = ["DECODE", "D1ED", "B00B", "BEEF", "C0FFEE",
+                    "BEAD", "DEAD", "DEED", "DECADE", "FADE", "BA11",
+                    "B1EED", "FACE", "F00D", "FEED", "FACADE", "6969", "9696", "CAFE",
+                    "CEA5E", "B0D1E5", "CA5E", "B033C1", "DEF1ED", "D1CE", "AC1D",
+                    "BADD1E", "EDD1E", "FEEB1E", "C0DE","BADA55", "007AC0",
+                    "C0C0", "DEAF", "DEC1DE", "AD1DA5", "CA1C",
+                    "ABCDEF", "ABCDE", "ABCD", "D15C0",
+                    "C0DA", "2025", "2024", "2026", "ACAC1A", "CA551E"]     
         if (len(pieceHex) - len(pieceHex.lstrip('0'))) > 2:
             if (len(pieceHex) - len(pieceHex.lstrip('0'))) == 3:
                 self.everthing_else = "3 length"
@@ -175,14 +178,17 @@ class Hexcode:
                 self.everthing_else = "2 length"        
             if (len(pieceHex) - len(pieceHex.lstrip('0'))) == 5:
                 self.everthing_else = "Single Length!"    
+            return
         
         for i in range(len(wordlist)):
             if wordlist[i] in pieceHex:
                 self.everthing_else = wordlist[i]
+                return
 
 
         if (self.num_same_digit == 3) and (len(list(set(pieceHex))) == 2):
             self.everthing_else = "2L-repeaters"
+            return
 
         if self.num_same_digit > 3:
             char_lst = "0123456789ABCDEF"
@@ -190,9 +196,9 @@ class Hexcode:
                 current_char = char * 4
                 if current_char in pieceHex:
                     self.everthing_else = "True "+ char + "'s"
+                    return
             self.everthing_else = str(max(pieceHex, key=pieceHex.count)) + "'s"
-
-        self.everthing_else = False
+            return
 
     def delta(self, main_dict: dict[str,str] | None = None) -> tuple:
         """Computes the lowest delta between a piece and a dictionary of hexes
@@ -243,7 +249,7 @@ class Hexcode:
                 ("35530A", "Kuudra Follower 3p"),
                 ("BFBCB2", "Adaptive Armour (Outside Dungeon) 3p"),
                 ("ADFF2F", "Bouncy"),
-                ("E7413C", "Necron Dye/Chestplate"),
+                ("E7413C", "Necron Dye/Chest"),
                 ("E1EB34", "Skeleton Grunt"),
                 ("268105", "Skeleton Lord 3p"),
                 ("FF6B0B", "Skeleton Master"),
@@ -251,7 +257,7 @@ class Hexcode:
                 ("D51230", "Zombie Comander"),
                 ("9B01C1", "Zombie Lord 3p"),
                 ("D07F00", "Zombie Soldier"),
-                ("E0FCF7", "Speedster Set/Mercenary Boots"),
+                ("E0FCF7", "Speedster Set/Mercenary Bts"),
                 ("450101", "Crypt Witherlord"),
                 ("993399", "Great Spook"),
                 ("899E20", "Melon Armour 3p"),
@@ -425,7 +431,7 @@ class Hexcode:
                 ("3E05AF", "Terror Chestplate"),
                 ("5D23D1", "Terror Leggings"),
                 ("7C44EC", "Terror Boots"),
-                ("D9D9D9", "Stone/Metal/Steel Chestplate"),
+                ("D9D9D9", "Stone-Metal-Steel Chestplate"),
                 ("FF4600", "Orange Chestplate (Rift)"),
                 ("FFF200", "Chicken Leggings (Rift)"),
                 ("48FF00", "Femurgrowth Leggings (Rift)"),

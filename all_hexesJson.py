@@ -34,7 +34,8 @@ def assign(hexcode: Hexcode) -> dict[str, object]:
 
     if types_delta_len != 0:
         if types_in_current_delta[0] == "3p":
-            h_delta_hex, h_delta_hex_name, h_piece_delta, h_abs_distance = hexcode.delta(hexcode.hexcode, "VELVET_TOP_HAT")
+            hexcode.piecetype = "VELVET_TOP_HAT"
+            h_delta_hex, h_delta_hex_name, h_piece_delta, h_abs_distance = hexcode.delta()
             closest_sub_sub_dict = {}
             closest_sub_sub_dict["delta_hex"] = h_delta_hex
             closest_sub_sub_dict["delta_hex_name"] = h_delta_hex_name
@@ -51,7 +52,8 @@ def assign(hexcode: Hexcode) -> dict[str, object]:
                 if len(armor_types) == 0:
                     break
                 for typs in armor_types[:]:
-                    first_delta_hex, first_delta_hex_name, first_piece_delta, first_abs_distance = hexcode.delta(hexcode.hexcode, typs)
+                    hexcode.piecetype = typs
+                    first_delta_hex, first_delta_hex_name, first_piece_delta, first_abs_distance = hexcode.delta()
                     if first_delta_hex_name not in hypixel_hexes_in_dict:
                         closest_sub_sub_dict = {}
                         closest_sub_sub_dict["delta_hex"] = first_delta_hex
@@ -91,14 +93,26 @@ def assign(hexcode: Hexcode) -> dict[str, object]:
     return sub_dict
 
 def all_hexcodes_json():
+    print("This will modify existing hexes list database. \nAre you sure you want to continue? (Y/n)")
+    cnt = 0
+    while True:
+        warning_answer = input("-> ")
+        if warning_answer == "Y":
+            break
+        if warning_answer == "n" or cnt > 1:
+            print("exiting program...")
+            exit()
+        print("Invalid answer.\nContinue? (Y/n)")
+        cnt += 1
     MULTIPLIER = 16**5 # 16^5
     FILE_RANGE = 16
     TOTAL_NUMS = MULTIPLIER*FILE_RANGE
     print(MULTIPLIER)
-    for file_number in range(FILE_RANGE):
+    for file_number in range(11,FILE_RANGE):
         json_dict = {}
         lower_bound = file_number * MULTIPLIER
         upper_bound = (file_number+1) * MULTIPLIER
+        half = ((upper_bound-lower_bound)//2) + lower_bound - 1
         for integer in range(lower_bound, upper_bound):
             current_hexcode = Hexcode(int_to_rgb(integer))
             sub_dict = assign(current_hexcode)
@@ -110,32 +124,38 @@ def all_hexcodes_json():
                     print(f"{file_number} started")
                 num = comparison_integer + (file_number * MULTIPLIER)
                 print(f"File {file_number}: {comparison_integer*100/MULTIPLIER:.3f}% - Whole Program: {num*100/(TOTAL_NUMS):.3f}%", end="\r")
+            
+            if integer == half:
+                with open(f"hexes_list\\hexes_{file_number}.0.json", "w") as fd:
+                    json.dump(json_dict, fd, indent=4)
+                    print(f"\nwrote {file_number}.0")
+                json_dict.clear() 
 
-        with open(f"hexes_list\\hexes_{file_number}.json", "w") as fd:
+        with open(f"hexes_list\\hexes_{file_number}.8.json", "w") as fd:
             json.dump(json_dict, fd, indent=4)
-            print(f"\nwrote {file_number}")
+            print(f"\nwrote {file_number}.8")
         print(f"\n")
     print("\nProgram complete")
 
-def jsonspliiter():
-    for file_number in range(16):  
-        col: dict = {}
-        col_split_1 = {}
-        col_split_2 = {}
-        with open(f"hexes_list\\hexes_{file_number}.json", "r") as fd:
-            col = json.load(fd)
-        half_col_len = len(col)//2
-        for integer, (hex, subdict) in enumerate(col.items()):
-            if integer < half_col_len:
-                col_split_1[hex] = subdict
-            else:
-                col_split_2[hex] = subdict         
-        with open(f"hexes_list\\hexes_{file_number}.0.json", "w") as fd:
-            json.dump(col_split_1, fd, indent=4)
-            print(f"\nwrote {file_number}.0")
-        with open(f"hexes_list\\hexes_{file_number}.8.json", "w") as fs:
-            json.dump(col_split_2, fs, indent=4)
-            print(f"\nwrote {file_number}.8")            
+# def jsonsplititer():
+#     for file_number in range(16):  
+#         col: dict = {}
+#         col_split_1 = {}
+#         col_split_2 = {}
+#         with open(f"hexes_list\\hexes_{file_number}.json", "r") as fd:
+#             col = json.load(fd)
+#         half_col_len = len(col)//2
+#         for integer, (hex, subdict) in enumerate(col.items()):
+#             if integer < half_col_len:
+#                 col_split_1[hex] = subdict
+#             else:
+#                 col_split_2[hex] = subdict         
+#         with open(f"hexes_list\\hexes_{file_number}.0.json", "w") as fd:
+#             json.dump(col_split_1, fd, indent=4)
+#             print(f"\nwrote {file_number}.0")
+#         with open(f"hexes_list\\hexes_{file_number}.8.json", "w") as fs:
+#             json.dump(col_split_2, fs, indent=4)
+#             print(f"\nwrote {file_number}.8")            
 
 def worst_delta():
     worst_helm: dict = {}
@@ -249,7 +269,66 @@ def highest_abs():
     for key, val in worst_boots.items():
         print(f"{key}: {val}")                  
 
+def all_teirs():
+    nums = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+
+    RANGE_FILES = 16
+    LOWER = 0
+    for file_number in range(LOWER,RANGE_FILES+LOWER):  
+        for sub_file_number in range(0, 9, 8):
+            col: dict = {}
+            with open(f"hexes_list\\hexes_{file_number}.{sub_file_number}.json", "r") as fd:
+                col = json.load(fd)
+            for idx, rgbhex in enumerate(col.keys()):
+                delta_dict: dict = col[rgbhex]["delta"]
+                cash = 0
+                for unique_deltas, sub_dicts in delta_dict.items():
+                    if "VELVET_TOP_HAT" in unique_deltas:
+                        if sub_dicts["delta"] < 2.000:
+                            nums[0][0] += 1
+                        elif sub_dicts["delta"] < 5.000:
+                            nums[0][1] += 1
+                        else:
+                            nums[0][2] += 1                            
+                    if "CASHMERE_JACKET" in unique_deltas:
+                        if sub_dicts["delta"] < 2.000:
+                            nums[1][0] += 1
+                        elif sub_dicts["delta"] < 5.000:
+                            nums[1][1] += 1
+                        else:
+                            nums[1][2] += 1   
+
+                    if "SATIN_TROUSERS" in unique_deltas:
+                        if sub_dicts["delta"] < 2.000:
+                            nums[2][0] += 1
+                        elif sub_dicts["delta"] < 5.000:
+                            nums[2][1] += 1
+                        else:
+                            nums[2][2] += 1     
+                        cash += 1
+                        if cash != 1:
+                            print("error")
+                            print("error")    
+                            print(rgbhex)                 
+                            exit()                               
+                    if "OXFORD_SHOES" in unique_deltas:
+                        if sub_dicts["delta"] < 2.000:
+                            nums[3][0] += 1
+                        elif sub_dicts["delta"] < 5.000:
+                            nums[3][1] += 1
+                        else:
+                            nums[3][2] += 1                             
+
+            print(f"{file_number}.{sub_file_number} done")                                                                     
+
+    print(nums)
+    for i in nums:
+        print(i, sum(i))
+        for idx, tier in enumerate(i):
+            print(f"{idx+1}: {tier}       -     probability: {(100*tier)/(RANGE_FILES*1048576):.3f}%")
+
+
 
 if __name__ == "__main__":
-    highest_abs()
+    all_teirs()
 

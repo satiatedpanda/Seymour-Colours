@@ -1,5 +1,5 @@
 from private_functions.opendatabase import opendatabase, open_rando
-import csv
+from hexcodeClass import Hexcode
 
 def databaseExtract():
     databaselist: list[str] = []
@@ -55,6 +55,29 @@ def openfile():
         database = fd.read().split("\n")
         database.pop()
     return database
+
+def databaseHexExtract():
+    databaselist: list[Hexcode] = []
+
+    col: dict[str, str] = opendatabase() #This returns a dict from the json object. Done this way to not dox myself :D
+    colkeys = list(col.keys())
+    for i in range(len(col)):
+        curName = col[colkeys[i]]["pieceName"]
+        curName = curName.replace(" ", "_")
+        curName = curName.replace("Giant_", "") # replace all reforges with adding on more replace statements when necessary
+        curName = curName.upper()
+        curHex = col[colkeys[i]]["hexcode"]
+        curuuid = colkeys[i]
+        temp = Hexcode(curHex, curName, curuuid)
+        databaselist.append(temp)
+
+    with open(r"personal_databases\seymourdatabase.txt", "w") as f:
+        dbstr = ""
+        for i in range(len(databaselist)):
+            dbstr = f"{databaselist[i]}\n".upper()
+            f.write(dbstr)
+    return databaselist
+
 
 
 if __name__ == '__main__':
