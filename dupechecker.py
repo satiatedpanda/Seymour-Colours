@@ -57,7 +57,13 @@ def find_all_dupes():
     return data_dict, dupe_dict, negated_dupe_dict, formated_dupe_list
 
 
-def find_all_t1s(data_dict, dupe_dict, negated_dupe_dict, formated_dupe_list):
+def find_all_t1s(data_dict, dupe_dict, negated_dupe_dict, formated_dupe_list: list):
+    dupe_dict = dict(sorted(dupe_dict.items()))
+    negated_dupe_dict = dict(sorted(negated_dupe_dict.items()))
+    formated_dupe_list = [i for n, i in enumerate(formated_dupe_list) if i not in formated_dupe_list[n + 1:]]
+    formated_dupe_list.sort(key=lambda x: list(x.items())[0])
+    #sorts all dictionaries and removes duplicates
+
     dupe_t1s = []
     #gets all t1s to dupes
     for hex,piece in data_dict.items():

@@ -9,7 +9,7 @@ def databaseExtract():
     for i in range(len(col)):
         curName: str = col[colkeys[i]]["pieceName"]
         curName = curName.replace(" ", "_")
-        curName = curName.replace("Giant_", "") # replace all reforges with adding on more replace statements when necessary
+        curName = curName.replace("Giant_", "").replace("Reinforced_", "") # replace all reforges with adding on more replace statements when necessary
         curHex = col[colkeys[i]]["hexcode"]
         databaselist.append(f"{colkeys[i]} {curName} #{curHex}".upper())
 

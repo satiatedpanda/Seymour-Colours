@@ -1,16 +1,17 @@
 
 from databaseExtractor import databaseExtract, random_extract
-from seymourhelper import find_many
+from seymourhelper import find_many, readCIEvals
 from hexcodeClass import Hexcode
 
 
 def hexcodestuff(list_var: list[Hexcode]):
     new_list = []
     list_var = sorted(list_var, key=lambda x: x.hexcode)
+    dictionary = readCIEvals()
     for current_hex in list_var:
         iHex = current_hex.hexcode
         iType = current_hex.piecetype
-        current_hex.assign_all_attributes()
+        current_hex.assign_all_attributes(dictionary)
         current_hex.rename_all_false()
         lowestHexHyp, lowestHexName, lowestscorestr, distance = current_hex.pdelta        
         deltastr = str(f"{lowestHexHyp}, {lowestHexName}, {lowestscorestr}, {distance}")        
@@ -74,11 +75,18 @@ def json_file_hexcode_stuff(list_var: list[list[str]]): #unfinished
     return new_list
 
 def string_splitter():
-    ColorSetHexes: list[list[str]] = []
-    InputStringHexes = input("Colour Set Hex Codes, Right Click and paste as a single line:\n").upper()
+    ColorSetHexes: list[Hexcode] = []
+    InputStringHexes = ""
+    read_from_file = input("Do you want to read from a file?\nY/n: ")    
+    if "Y" in read_from_file[:5]:
+        file_location = input("Paste file location: ")
+        with open(file_location[1:-1]) as fd:
+            InputStringHexes = fd.read().upper() 
+    else:
+        InputStringHexes = input("Colour Set Hex Codes, Right Click and paste as a single line:\n").upper()
     InputStringHexes = InputStringHexes.replace('\t', '').replace(',', '').replace(" ", "").replace("|", "").replace("\n", "")
     InputStringHexes = InputStringHexes + "END"
-    if InputStringHexes.startswith("SEYMOUREXPORT"):
+    if InputStringHexes.startswith("SEYMOUREXPORT") or InputStringHexes.startswith("SEYMOURDATABASEEXPORT"):
         input_list = InputStringHexes.split("TOP:")
         for string in input_list:
             if string[-3:] == "END":
@@ -125,10 +133,11 @@ def string_splitter():
             else:
                 print("Split String Error")
                 raise SystemExit
+
     return ColorSetHexes
   
 def auto_yes():
-    changed_list = []  
+    changed_list = []   
     with open("personal_databases\seymourdatabase.txt", "r") as fs:
         oldcolors = fs.read().split('\n')
         oldcolors.pop(-1)
@@ -192,10 +201,7 @@ def MainFunction():
     FinalPrintList = hexcodestuff(ColorSetHexes)
     return FinalPrintList, changed_list, Auto
 
-
-
-if __name__ == '__main__':
-    
+def ActualMain():
     piecedata, updatelist, append = MainFunction()
     if append != "0":
         if len(updatelist) < 300:
@@ -222,3 +228,6 @@ if __name__ == '__main__':
                         dbstr = f"{piecedata[i]}\n"
                         fd.write(dbstr)
                     print("Writing Done")
+
+if __name__ == '__main__':
+    ActualMain()

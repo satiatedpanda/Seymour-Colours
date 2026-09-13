@@ -1,6 +1,8 @@
 import json
 from hexcodeClass import Hexcode
-from seymourhelper import int_to_rgb
+from seymourhelper import int_to_rgb, rgbdecouple, Hypixel_Dictionary, avgabsSet, CIEVals
+from collections import Counter
+# import pandas
 
 
 def get_piece_type_delta(delta_hex_name: str):
@@ -108,7 +110,7 @@ def all_hexcodes_json():
     FILE_RANGE = 16
     TOTAL_NUMS = MULTIPLIER*FILE_RANGE
     print(MULTIPLIER)
-    for file_number in range(11,FILE_RANGE):
+    for file_number in range(FILE_RANGE):
         json_dict = {}
         lower_bound = file_number * MULTIPLIER
         upper_bound = (file_number+1) * MULTIPLIER
@@ -120,6 +122,7 @@ def all_hexcodes_json():
 
             comparison_integer = integer - lower_bound
             if comparison_integer%5000 == 0:
+                
                 if comparison_integer == 0:
                     print(f"{file_number} started")
                 num = comparison_integer + (file_number * MULTIPLIER)
@@ -281,7 +284,6 @@ def all_teirs():
                 col = json.load(fd)
             for idx, rgbhex in enumerate(col.keys()):
                 delta_dict: dict = col[rgbhex]["delta"]
-                cash = 0
                 for unique_deltas, sub_dicts in delta_dict.items():
                     if "VELVET_TOP_HAT" in unique_deltas:
                         if sub_dicts["delta"] < 2.000:
@@ -304,13 +306,7 @@ def all_teirs():
                         elif sub_dicts["delta"] < 5.000:
                             nums[2][1] += 1
                         else:
-                            nums[2][2] += 1     
-                        cash += 1
-                        if cash != 1:
-                            print("error")
-                            print("error")    
-                            print(rgbhex)                 
-                            exit()                               
+                            nums[2][2] += 1                              
                     if "OXFORD_SHOES" in unique_deltas:
                         if sub_dicts["delta"] < 2.000:
                             nums[3][0] += 1
@@ -327,8 +323,219 @@ def all_teirs():
         for idx, tier in enumerate(i):
             print(f"{idx+1}: {tier}       -     probability: {(100*tier)/(RANGE_FILES*1048576):.3f}%")
 
+def all_abs():
+    nums = [[],[],[],[]]
 
+    RANGE_FILES = 16
+    LOWER = 0
+    for file_number in range(LOWER,RANGE_FILES+LOWER):  
+        for sub_file_number in range(0, 9, 8):
+            col: dict = {}
+            with open(f"hexes_list\\hexes_{file_number}.{sub_file_number}.json", "r") as fd:
+                col = json.load(fd)
+            for idx, rgbhex in enumerate(col.keys()):
+                delta_dict: dict = col[rgbhex]["delta"]
+                for unique_deltas, sub_dicts in delta_dict.items():
+                    if "VELVET_TOP_HAT" in unique_deltas:
+                        nums[0].append(sub_dicts["abs_distance"])
+                    if "CASHMERE_JACKET" in unique_deltas:
+                        nums[1].append(sub_dicts["abs_distance"])  
+                    if "SATIN_TROUSERS" in unique_deltas:
+                        nums[2].append(sub_dicts["abs_distance"])                       
+                    if "OXFORD_SHOES" in unique_deltas:
+                        nums[3].append(sub_dicts["abs_distance"])                           
+
+            print(f"{file_number}.{sub_file_number} done")                                                                     
+
+    H = ["helm", "chest", "legs", "boots"]
+    for dix, i in enumerate(nums):
+        i = Counter(i)
+        i = sorted(i.items())
+        print(H[dix])
+        for j in i:
+            key, value = j
+            print(f"{key}: {value}")
+        
+        print("\n\n\n")
+
+
+def max_abs():
+    print_lst = []
+    RANGE_FILES = 16
+    LOWER = 0
+    for file_number in range(LOWER,RANGE_FILES+LOWER):  
+        for sub_file_number in range(0, 9, 8):
+            col: dict = {}
+            with open(f"hexes_list\\hexes_{file_number}.{sub_file_number}.json", "r") as fd:
+                col = json.load(fd)
+            for idx, rgbhex in enumerate(col.keys()):
+                delta_dict: dict = col[rgbhex]["delta"]
+                for unique_deltas, sub_dicts in delta_dict.items():
+                    hex_name =  sub_dicts["delta_hex_name"]
+                    abs_dist = sub_dicts["abs_distance"]
+                    deltas = sub_dicts["delta"]
+                    deltas = f"{deltas:.3f}"
+                    if "VELVET_TOP_HAT" in unique_deltas and abs_dist == 310:
+                        print_lst.append(f"helm: {rgbhex} - {hex_name} - {deltas} - {abs_dist}")
+                    if "CASHMERE_JACKET" in unique_deltas and abs_dist == 260:
+                        print_lst.append(f"chest: {rgbhex} - {hex_name} - {deltas} - {abs_dist}")
+                    if "SATIN_TROUSERS" in unique_deltas and abs_dist == 236:
+                        print_lst.append(f"legs: {rgbhex} - {hex_name} - {deltas} - {abs_dist}")
+                    if "OXFORD_SHOES" in unique_deltas and abs_dist == 254:
+                        print_lst.append(f"boots: {rgbhex} - {hex_name} - {deltas} - {abs_dist}")                      
+
+            print(f"{file_number}.{sub_file_number} done")                                                                     
+
+    for i in print_lst:
+        print(i)
+
+def optimizedpossibilites(target_hexcode="FFFFFF"):
+    num_t0 = 0
+    num_t1 = 0
+    num_t2 = 0
+    r: int
+    g: int
+    b: int
+    max_variance = 80
+    delta_dict: dict[str, float] = {}
+
+    r, g, b = rgbdecouple(target_hexcode)
+    cieT = CIEVals(target_hexcode).cie
+    cieTARG = ("target", cieT[0], cieT[1], cieT[2])
+    red_lower, red_upper = (max(0, r-max_variance), min(256, r+max_variance)) #lower bound, upper bound
+    green_lower, green_upper = (max(0, g-max_variance), min(256, g+max_variance))
+    blue_lower, blue_upper = (max(0, b-max_variance), min(256, b+max_variance))
+    print(f"Total Hexes to search: {(red_upper-red_lower)*(green_upper-green_lower)*(blue_upper-blue_lower)}", end="\r")
+    for red_val in range(red_lower, red_upper):
+        for green_val in range(green_lower, green_upper):
+            for blue_val in range(blue_lower, blue_upper):
+                if (abs(red_val-r)+abs(blue_val-b)+abs(green_val-g)) > 105:
+                    continue                      
+                hexcode = Hexcode(int_to_rgb(red_val * 65536 + green_val * 256 + blue_val))          
+                # _, _, delta, _ = hexcode.delta({f"{target_hexcode}": "target"})
+                _, _, delta, _ = hexcode.fastdelta({f"{target_hexcode}": cieTARG})                
+                if delta < 1.0:
+                    num_t0 += 1
+                if delta < 2.0:
+                    num_t1 += 1
+                    delta_dict[hexcode.hexcode] = delta
+                elif delta < 5.0:
+                    num_t2 += 1
+                    delta_dict[hexcode.hexcode] = delta
+    print("                                                  ", end="\r")
+    user_input = input("type 'Y' for list of hexes, sorted by delta\n")
+    # user_input = ""
+    if "Y" in user_input:
+        print(f"-----\n{target_hexcode} - t1: {num_t1}, t2: {num_t2}-----\n")
+        delta_dict = dict(sorted(delta_dict.items(), key=lambda item: item[1]))
+        for k, v in delta_dict.items():
+            print(f"{k} - {v}")
+    else:
+        print(f"#{target_hexcode}, {num_t0}, {num_t1}, {num_t2}")
+
+def findtargethex(comparison_hex: str, input_delta: str):
+    #Finds the target hex if youre only given a delta and 1 hexcode. Needs 4-5 decimal places for precision
+    #Delta must be below 5
+    r: int
+    g: int
+    b: int
+    max_variance = 80
+    delta_dict: dict[str, float] = {}
+    final_dict = {}
+
+    r, g, b = rgbdecouple(comparison_hex)
+    cieT = CIEVals(comparison_hex).cie
+    cieTARG = ("target", cieT[0], cieT[1], cieT[2])
+    red_lower, red_upper = (max(0, r-max_variance), min(256, r+max_variance)) #lower bound, upper bound
+    green_lower, green_upper = (max(0, g-max_variance), min(256, g+max_variance))
+    blue_lower, blue_upper = (max(0, b-max_variance), min(256, b+max_variance))
+    print(f"Total Hexes to search: {(red_upper-red_lower)*(green_upper-green_lower)*(blue_upper-blue_lower)}", end="\r")
+    for red_val in range(red_lower, red_upper):
+        for green_val in range(green_lower, green_upper):
+            for blue_val in range(blue_lower, blue_upper):
+                if (abs(red_val-r)+abs(blue_val-b)+abs(green_val-g)) > 105:
+                    continue             
+                temp_hex = int_to_rgb(red_val * 65536 + green_val * 256 + blue_val)         
+                hexcode = Hexcode(temp_hex)                         
+                _, _, delta, _ = hexcode.fastdelta({f"{comparison_hex}": cieTARG})                
+                if delta < 5.0:
+                    delta_dict[temp_hex] = delta
+    print("                                                  ", end="\r")
+    delta_dict = dict(sorted(delta_dict.items(), key=lambda item: abs(item[1]-float(input_delta))))
+    sig_figs = len(input_delta)-1
+    if input_delta[-1] != "0":
+        for k, v in delta_dict.items():
+            t = str(v)[:sig_figs]
+            if t == input_delta[:-1]:
+                final_dict[k] = v
+    else:
+        sig_figs = len(input_delta.rstrip("0"))-1
+        for k, v in delta_dict.items():
+            t = str(v)[:sig_figs]
+            s = input_delta[:sig_figs]
+            if t == s:
+                final_dict[k] = v        
+    print_lst = ["Best Guess", "2nd", "3rd", "4th", "5th"]
+    for idx, (k, v) in enumerate(final_dict.items()):
+        if idx < 5:
+            print(f"{print_lst[idx]}: {k} - {v}")
+        else:
+            break
+
+def optimizedposALL():
+    dictonary = Hypixel_Dictionary()
+    for Hyhex, HYhex_name in dictonary.items():
+        num_t0 = 0
+        num_t1 = 0
+        num_t2 = 0
+        r: int
+        g: int
+        b: int
+        max_variance = 80
+
+        r, g, b = rgbdecouple(Hyhex)
+        cieT = CIEVals(Hyhex).cie
+        cieTARG = ("target", cieT[0], cieT[1], cieT[2])
+        red_lower, red_upper = (max(0, r-max_variance), min(256, r+max_variance)) #lower bound, upper bound
+        green_lower, green_upper = (max(0, g-max_variance), min(256, g+max_variance))
+        blue_lower, blue_upper = (max(0, b-max_variance), min(256, b+max_variance))
+        print(f"Total Hexes to search: {(red_upper-red_lower)*(green_upper-green_lower)*(blue_upper-blue_lower)}", end="\r")
+        for red_val in range(red_lower, red_upper):
+            for green_val in range(green_lower, green_upper):
+                for blue_val in range(blue_lower, blue_upper):
+                    if (abs(red_val-r)+abs(blue_val-b)+abs(green_val-g)) > 105:
+                        continue                      
+                    hexcode = Hexcode(int_to_rgb(red_val * 65536 + green_val * 256 + blue_val))          
+                    # _, _, delta, _ = hexcode.delta({f"{target_hexcode}": "target"})
+                    _, _, delta, _ = hexcode.fastdelta({f"{Hyhex}": cieTARG})                
+                    if delta < 1.0:
+                        num_t0 += 1
+                    if delta < 2.0:
+                        num_t1 += 1
+                    elif delta < 5.0:
+                        num_t2 += 1
+        print("                                                  ", end="\r")
+        print(f"{HYhex_name}, {Hyhex}, t0: {num_t0}, t1: {num_t1}, t2: {num_t2}")
+
+  
 
 if __name__ == "__main__":
-    all_teirs()
-
+    # all_abs()
+    # all_hexcodes_json()
+    #all_teirs()
+    #worst_delta()
+    # highest_abs()
+    # max_abs()
+    # optimizedpossibilites("#FF700A")
+    # findtargethex("#b266ff", "1.999")
+    # optimizedposALL() 
+    optimizedpossibilites("3ABE78")
+    optimizedpossibilites("169F57")
+    optimizedpossibilites("82E3D8")
+    optimizedpossibilites("2AB5A5")
+    optimizedpossibilites("D579FF")
+    optimizedpossibilites("6E00A0")
+    optimizedpossibilites("BB0000")
+    optimizedpossibilites("FF4242")
+    optimizedpossibilites("FFC234")
+    optimizedpossibilites("FFF7E6")
