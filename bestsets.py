@@ -20,82 +20,6 @@ def abs_restrictor(hex1, hex2, hex3, hex4, restrictor=None):
         return False
     return True
 
-def main():
-    all_sets = input("Do you want sets with or without overlap? Y for without overlap, n for all sets including overlap\nY/n: ")
-    ColorSetHexes = databaseExtract()
-    for i in range(len(ColorSetHexes)):
-        temp = ColorSetHexes[i].split(" ")
-        temp[2] = CIEVals(temp[2], uuid=temp[0])
-        ColorSetHexes[i] = temp[1:]
-    ColorSetHexes = [list(g) for k, g in groupby(sorted(ColorSetHexes, key=lambda item: item[0]), key=lambda x: x[0])]
-    helm: list[CIEVals] = [x[1] for x in ColorSetHexes[3]]
-    chest: list[CIEVals] = [x[1] for x in ColorSetHexes[0]]  
-    legs: list[CIEVals] = [x[1] for x in ColorSetHexes[2]]  
-    boots: list[CIEVals] = [x[1] for x in ColorSetHexes[1]]     
-    del ColorSetHexes
-
-    best_sorted = []
-    restrictor = 7.000
-    cnt = 0
-    while cnt<len(helm): #overall loop, TERRIBLY INEFFICENT
-        best_set = ["", "", "", "", "", ""]
-        hm = helm[cnt]
-        ## Remove all hexes in these that do not match current helmet- will then just skip over them the next time it runs a loop
-        for idx_c, ch in enumerate(chest):      
-            if deltaECie(hm, ch) < restrictor:
-                for idx_l, lg in enumerate(legs): 
-                    if (deltaECie(hm, lg) < restrictor) and (deltaECie(ch, lg) < restrictor):                                          
-                        for idx_b, bt in enumerate(boots):
-                            delta, abs = quickSetDelta(hm, ch, lg, bt)
-                            if delta < 5.000:
-                                best_set = [hm, ch, lg, bt, delta, abs]
-                                best_sorted.append(best_set)
-        print(f"{len(helm)-cnt}        ", end="\r")
-        cnt += 1
-
-
-    if "Y" in all_sets[:5]:
-        best_sorted = sorted(best_sorted, key=lambda x: x[4])    
-        taken_uuids = []
-        for val in best_sorted:
-            skip = False
-            temp_uuids = []
-            for i in range(4):
-                if val[i].uuid in taken_uuids:
-                    skip = True
-                else:
-                    temp_uuids.append(val[i].uuid)
-            if skip == False:
-                taken_uuids = taken_uuids + temp_uuids
-                print(val[0].hex, val[1].hex, val[2].hex, val[3].hex, val[4], val[5])
-    elif "Z" in all_sets[:5]:
-        best_sorted = sorted(best_sorted, key=lambda x: float(x[5]))    
-        taken_uuids = []
-        for val in best_sorted:
-            skip = False
-            temp_uuids = []
-            for i in range(4):
-                if val[i].uuid in taken_uuids:
-                    skip = True
-                else:
-                    temp_uuids.append(val[i].uuid)
-            if skip == False:
-                taken_uuids = taken_uuids + temp_uuids
-                print(val[0].hex, val[1].hex, val[2].hex, val[3].hex, val[4], val[5])                
-    else:
-        best_sorted = sorted(best_sorted, key=lambda x: x[4])
-        with open("personal_databases\\BestSets.txt", "w") as fd:
-                dbstr = ""
-                for val in best_sorted:
-                    dbstr = f"{val[0].hex}, {val[1].hex}, {val[2].hex}, {val[3].hex}, DELTA: {val[4]}, ABS: {val[5]}\n"
-                    fd.write(dbstr)
-                print("Writing Done")      
-        best_sorted = best_sorted[:5001]
-        best_sorted = sorted(best_sorted, key=lambda x: float(x[5]))          
-        for val in best_sorted:
-            print(val[0].hex, val[1].hex, val[2].hex, val[3].hex, val[4], val[5])
-
-
 def string_splitter(text):
     ColorSetHexes: list[str] = []
     InputStringHexes = text
@@ -153,8 +77,6 @@ def string_splitter(text):
         ColorSetHexes[idx] = f"{created_uuid} {val}"
     return ColorSetHexes
   
-
-
 def main():
     all_sets = input("Do you want sets with or without overlap? Y for without overlap, n for all sets including overlap\nY/n: ")
     ColorSetHexes = databaseExtract()

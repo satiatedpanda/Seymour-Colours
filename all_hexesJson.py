@@ -409,7 +409,7 @@ def optimizedpossibilites(target_hexcode="FFFFFF"):
     for red_val in range(red_lower, red_upper):
         for green_val in range(green_lower, green_upper):
             for blue_val in range(blue_lower, blue_upper):
-                if (abs(red_val-r)+abs(blue_val-b)+abs(green_val-g)) > 105:
+                if (abs(red_val-r)+abs(blue_val-b)+abs(green_val-g)) > 135:
                     continue                      
                 hexcode = Hexcode(int_to_rgb(red_val * 65536 + green_val * 256 + blue_val))          
                 # _, _, delta, _ = hexcode.delta({f"{target_hexcode}": "target"})
@@ -529,13 +529,13 @@ if __name__ == "__main__":
     # optimizedpossibilites("#FF700A")
     # findtargethex("#b266ff", "1.999")
     # optimizedposALL() 
-    optimizedpossibilites("3ABE78")
-    optimizedpossibilites("169F57")
-    optimizedpossibilites("82E3D8")
-    optimizedpossibilites("2AB5A5")
-    optimizedpossibilites("D579FF")
-    optimizedpossibilites("6E00A0")
-    optimizedpossibilites("BB0000")
-    optimizedpossibilites("FF4242")
-    optimizedpossibilites("FFC234")
-    optimizedpossibilites("FFF7E6")
+    optimizedpossibilites("00ee00")
+    # optimizedpossibilites("169F57")
+    # optimizedpossibilites("82E3D8")
+    # optimizedpossibilites("2AB5A5")
+    # optimizedpossibilites("D579FF")
+    # optimizedpossibilites("6E00A0")
+    # optimizedpossibilites("BB0000")
+    # optimizedpossibilites("FF4242")
+    # optimizedpossibilites("FFC234")
+    # optimizedpossibilites("FFF7E6")
